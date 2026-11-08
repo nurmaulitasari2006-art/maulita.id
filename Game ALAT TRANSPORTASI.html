@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alat Transportasi</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--sky:#BDE9FF;--sun:#FFD93D;--leaf:#6BCB77;--pink:#FF9ECF;--ink:#2B3A67;--card:#FFFFFF}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*:before,*:after{box-sizing:inherit}
+body{margin:0;min-height:100vh;font-family:"Baloo 2","Comic Sans MS","Trebuchet MS",sans-serif;color:var(--ink);background:linear-gradient(180deg,var(--sky),#E8F8FF 60%,#CFF5D6);display:flex;justify-content:center;padding:14px}
+#app{width:100%;max-width:560px}
+.card{background:var(--card);border:5px solid var(--sun);border-radius:28px;padding:22px 18px;text-align:center;box-shadow:0 8px 0 #F2B705;animation:pop .4s}
+h1{margin:4px 0;font-size:2.2rem;color:#FF6FA8;text-shadow:2px 2px 0 var(--sun)}
+h2{margin:6px 0;font-size:1.6rem}
+p{font-size:1.15rem;line-height:1.4;margin:8px 0}
+.big{font-size:4.2rem;line-height:1.2}
+.row{font-size:2.6rem;margin:8px 0}
+input{width:100%;font:inherit;font-size:1.3rem;padding:12px;border:4px solid var(--leaf);border-radius:18px;text-align:center;color:var(--ink);background:#F4FFF6;margin:10px 0}
+button{font:inherit;font-weight:800;font-size:1.25rem;color:var(--ink);border:0;border-radius:20px;padding:12px 22px;margin:6px;cursor:pointer;background:var(--leaf);box-shadow:0 5px 0 #3FA055;transition:transform .1s}
+button:active{transform:translateY(4px);box-shadow:0 1px 0 #3FA055}
+button.pk{background:var(--pink);box-shadow:0 5px 0 #E0629F}
+button.yl{background:var(--sun);box-shadow:0 5px 0 #F2B705}
+button.bl{background:#8AD4FF;box-shadow:0 5px 0 #46A8DE}
+button:disabled{opacity:.4;cursor:not-allowed}
+.opts{display:grid;gap:10px;margin-top:12px}
+.opts button{background:#FFF3B0;box-shadow:0 5px 0 #F2B705;font-size:1.3rem;text-align:left}
+.lv{display:flex;align-items:center;justify-content:space-between;width:calc(100% - 12px);font-size:1.4rem}
+.fb{min-height:110px;margin-top:10px}
+.fb .face{font-size:3.4rem}
+.star{display:inline-block;font-size:4rem;animation:spin .8s}
+.shake{animation:shake .4s}
+.top{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.snd{background:#8AD4FF;box-shadow:0 4px 0 #46A8DE;padding:6px 14px;font-size:1rem}
+.fly{position:fixed;font-size:2rem;pointer-events:none;animation:fall 1.6s forwards;z-index:9}
+@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes spin{from{transform:scale(0) rotate(-360deg)}to{transform:scale(1) rotate(0)}}
+@keyframes shake{25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+@keyframes fall{from{transform:translateY(-10vh)}to{transform:translateY(110vh) rotate(360deg);opacity:.2}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var A=document.getElementById('app'),name='',lv=0,qi=0,sc=0,tried=false,cur='',done=[null,null,null],Q;
+var M=[
+ {n:'Darat',e:'🚗',row:'🚗🚌🚲🏍️🚂',t:'Alat transportasi darat bergerak di atas tanah, seperti di jalan raya dan rel. Contohnya mobil, bus, sepeda, motor, dan kereta api.'},
+ {n:'Air',e:'🚢',row:'🚢⛵🚤🛶',t:'Alat transportasi air bergerak di atas air, seperti laut, sungai, dan danau. Contohnya kapal, perahu layar, speedboat, dan sampan.'},
+ {n:'Udara',e:'✈️',row:'✈️🚁🎈🚀',t:'Alat transportasi udara bergerak di langit. Contohnya pesawat, helikopter, balon udara, dan roket.'}];
+var S=[
+ [['Apa nama alat transportasi ini?','🚌',[['🚌','Bus'],['🚢','Kapal'],['✈️','Pesawat']],0],
+  ['Apa nama alat transportasi ini?','🚂',[['🚁','Helikopter'],['🚂','Kereta api'],['⛵','Perahu']],1],
+  ['Alat transportasi darat berjalan di mana?','🛣️',[['🌊','Di laut'],['☁️','Di langit'],['🛣️','Di jalan raya']],2],
+  ['Yang mana alat transportasi darat?','❓',[['🚢','Kapal'],['🚲','Sepeda'],['🚁','Helikopter']],1],
+  ['Yang BUKAN alat transportasi darat?','❓',[['🏍️','Motor'],['🚗','Mobil'],['🚢','Kapal']],2]],
+ [['Apa nama alat transportasi ini?','⛵',[['🚗','Mobil'],['⛵','Perahu layar'],['✈️','Pesawat']],1],
+  ['Apa nama alat transportasi ini?','🚢',[['🚂','Kereta api'],['🎈','Balon udara'],['🚢','Kapal']],2],
+  ['Alat transportasi air berjalan di mana?','🌊',[['🛤️','Di rel'],['🌊','Di laut'],['☁️','Di langit']],1],
+  ['Yang mana alat transportasi air?','❓',[['🚲','Sepeda'],['🚀','Roket'],['🚤','Speedboat']],2],
+  ['Yang BUKAN alat transportasi air?','❓',[['🚢','Kapal'],['🏍️','Motor'],['🛶','Sampan']],1]],
+ [['Apa nama alat transportasi ini?','✈️',[['🚌','Bus'],['✈️','Pesawat'],['🚢','Kapal']],1],
+  ['Apa nama alat transportasi ini?','🚁',[['🚲','Sepeda'],['⛵','Perahu'],['🚁','Helikopter']],2],
+  ['Alat transportasi udara bergerak di mana?','☁️',[['☁️','Di langit'],['🌊','Di laut'],['🛣️','Di jalan raya']],0],
+  ['Yang mana alat transportasi udara?','❓',[['🚗','Mobil'],['🎈','Balon udara'],['🚢','Kapal']],1],
+  ['Yang BUKAN alat transportasi udara?','❓',[['✈️','Pesawat'],['🚀','Roket'],['🚂','Kereta api']],2]]];
+
+function say(t){cur=t;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang='id-ID';u.pitch=2;u.rate=1.05;speechSynthesis.speak(u)}catch(e){}}
+function tone(fr){try{var c=new(window.AudioContext||window.webkitAudioContext)();fr.forEach(function(f,i){var o=c.createOscillator(),g=c.createGain();o.type='triangle';o.frequency.value=f;o.connect(g);g.connect(c.destination);var s=c.currentTime+i*.12;g.gain.setValueAtTime(.2,s);g.gain.exponentialRampToValueAtTime(.001,s+.3);o.start(s);o.stop(s+.3)})}catch(e){}}
+function confetti(){for(var i=0;i<14;i++){var s=document.createElement('div');s.className='fly';s.textContent='⭐';s.style.left=Math.random()*95+'vw';s.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(s);setTimeout(function(x){x.remove()},2200,s)}}
+function snd(){return '<button class="snd" onclick="say(cur)">🔊 Dengarkan lagi</button>'}
+function shuf(a){return a.map(function(x){return[Math.random(),x]}).sort(function(a,b){return a[0]-b[0]}).map(function(x){return x[1]})}
+
+function welcome(){
+ A.innerHTML='<div class="card"><div class="big">🚌✈️🚢</div><h1>Selamat Datang</h1><p>Yuk belajar alat transportasi!</p><input id="n" maxlength="20" placeholder="Nama Pemain"><br><button class="pk" onclick="start()">Mulai ▶</button></div>';
+}
+function start(){name=document.getElementById('n').value.trim()||'Teman';materi(0)}
+function materi(i){
+ var m=M[i];
+ A.innerHTML='<div class="card"><div class="top"><span>Materi '+(i+1)+'/3</span>'+snd()+'</div><div class="big">'+m.e+'</div><h2>Transportasi '+m.n+'</h2><div class="row">'+m.row+'</div><p>'+m.t+'</p><button class="pk" onclick="'+(i<2?'materi('+(i+1)+')':'menu()')+'">Lanjutkan ▶</button></div>';
+ say((i==0?'Halo '+name+'! ':'')+'Transportasi '+m.n+'. '+m.t);
+}
+function menu(){
+ var c=['#6BCB77','#8AD4FF','#FFD93D'],h='';
+ M.forEach(function(m,i){h+='<button class="lv" style="background:'+c[i]+';box-shadow:0 5px 0 rgba(0,0,0,.2)" onclick="play('+i+')"><span>'+m.e+' Level '+(i+1)+': '+m.n+'</span><span>'+(done[i]===null?'':'⭐'.repeat(done[i])||'🔁')+'</span></button>'});
+ A.innerHTML='<div class="card"><div class="top"><span>Pemain: '+name+'</span>'+snd()+'</div><h1>Pilih Level</h1>'+h+'<br><button class="yl" onclick="materi(0)">📖 Ulangi Materi</button><button class="bl" onclick="welcome()">🏠 Ganti Pemain</button></div>';
+ say('Halo '+name+'! Pilih level yang mau kamu mainkan.');
+}
+function play(i){lv=i;qi=0;sc=0;Q=S[i].map(function(q){return{t:q[0],e:q[1],o:shuf(q[2]),a:q[2][q[3]][1]}});ask()}
+function ask(){
+ var q=Q[qi];tried=false;
+ var o=q.o.map(function(x,i){return'<button id="o'+i+'" onclick="pick('+i+')">'+x[0]+' '+x[1]+'</button>'}).join('');
+ A.innerHTML='<div class="card"><div class="top"><span>Level '+(lv+1)+' · Soal '+(qi+1)+'/5</span>'+snd()+'</div><h2>'+q.t+'</h2><div class="big">'+q.e+'</div><div class="opts">'+o+'</div><div class="fb" id="fb"></div></div>';
+ say(q.t);
+}
+function pick(i){
+ var q=Q[qi],b=document.getElementById('o'+i),fb=document.getElementById('fb');
+ if(q.o[i][1]==q.a){
+  if(!tried)sc++;
+  tone([523,659,784,1047]);confetti();say('Yeyy! Selamat kamu berhasil!');
+  document.querySelectorAll('.opts button').forEach(function(x){x.disabled=true});
+  fb.innerHTML='<span class="star">⭐</span><p><b>Selamat kamu berhasil!</b></p><button class="pk" onclick="next()">'+(qi<4?'Lanjut ▶':'Lihat Skor ▶')+'</button>';
+ }else{
+  tried=true;b.disabled=true;tone([300,220]);say('Ups! Silakan coba lagi ya');
+  fb.innerHTML='<div class="face shake">😢</div><p><b>Silakan coba lagi</b></p>';
+ }
+}
+function next(){qi++;if(qi<5)ask();else result()}
+function result(){
+ done[lv]=sc;var all=done.every(function(d){return d!==null});
+ A.innerHTML='<div class="card"><div class="big">'+(sc>=3?'🏆':'🌟')+'</div><h1>Skor Akhir</h1><p style="font-size:2.4rem;margin:4px">'+sc+' / 5</p><div class="row">'+'⭐'.repeat(sc)+'</div><p><b>Selamat kamu berhasil!</b> '+(all?'Kamu sudah menyelesaikan semua level. Hebat!':'Silakan lanjut ke level berikutnya ya.')+'</p><button class="pk" onclick="menu()">🏠 Kembali ke Menu</button></div>';
+ tone([523,659,784,1047,1319]);confetti();
+ say('Yeyy! Skor kamu '+sc+' dari 5. Selamat kamu berhasil! '+(all?'Kamu hebat sekali!':'Silakan lanjut ke level berikutnya ya.'));
+}
+welcome();
+</script>
+</body>
+</html>
